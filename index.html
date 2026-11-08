@@ -78,6 +78,9 @@
   .qr img{width:88px;height:88px;background:#fff;padding:6px;border-radius:4px}
   .qr p{font-family:var(--sans);font-style:normal;font-size:12.5px;max-width:240px;margin:0}
   .no-ar .qr{display:flex}
+  .hint-chrome{display:none;margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
+  .hint-chrome.show{display:block}
+  .hint-chrome a{display:inline-block;margin-top:10px;padding:10px 18px;border-radius:999px;background:var(--accent);color:#14100a;text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500}
   .no-ar .ar-cta{display:none}
   .fade{animation:fade .8s ease both}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -112,6 +115,7 @@
     <div class="row"><span class="price" id="vPrice"></span><span class="allg" id="vAllg"></span></div>
     <div class="pairing" id="vPair"></div>
     <div class="qr"><img id="qrImg" alt="QR"><p id="qrText"></p></div>
+    <div class="hint-chrome" id="hintChrome"><span id="hintText"></span><br><a id="chromeLink" href="#"></a></div>
   </div>
 </div>
 
@@ -120,10 +124,13 @@ const UI = {
   pt:{table:'Mesa',howto:'<em>Veja o prato na sua mesa.</em><br>Toque em “Ver na mesa” e aponte a câmera para a mesa — o prato aparece em tamanho real.',
       onTable:'Ver na mesa',hud:'Mova o celular devagar sobre a mesa',pairing:'Sugestão do sommelier',size:'Tamanho real',
       qr:'A realidade aumentada funciona no celular. Aponte a câmera para o código para abrir este prato.',
+      openChrome:'Abrir no Chrome',inApp:'Para ver o prato na mesa, abra esta página no Chrome — navegadores dentro de apps bloqueiam a câmera.',
+      noArPhone:'Para ver o prato na mesa, instale ou atualize o “Google Play Services for AR” na Play Store.',
       allergens:'Alérgenos',credit:'Realidade aumentada por'},
   en:{table:'Table',howto:'<em>See the dish on your table.</em><br>Tap “View on table” and point your camera at the table — the dish appears at real size.',
       onTable:'View on table',hud:'Move your phone slowly across the table',pairing:'Sommelier’s pairing',size:'Real size',
       qr:'Augmented reality works on your phone. Point your camera at the code to open this dish.',
+      openChrome:'Open in Chrome',inApp:'To see this dish on your table, open this page in Chrome — in-app browsers block the camera.',
       noArPhone:'To see this dish on your table, install or update “Google Play Services for AR” from the Play Store, then reopen this page.',
       allergens:'Allergens',credit:'Augmented reality by'}
 };
@@ -242,6 +249,22 @@ fetch('menu.json', {cache:'no-cache'}).then(r => r.json()).then(m => {
   lang = [params.get('lang'), saved, nav, R.defaultLanguage].find(l => l && R.languages.includes(l)) || R.languages[0];
   render();
   const deep = params.get('prato') || params.get('dish'); if (deep) open(deep, false);
+});
+const UA = navigator.userAgent, isAndroid = /Android/i.test(UA);
+const inApp = /; wv\)|FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|Claude|GSA\//i.test(UA);
+function showChromeHint(){
+  const ui = UI[lang] || UI.en;
+  $('#hintText').textContent = ui.inApp;
+  const a = $('#chromeLink'); a.textContent = ui.openChrome;
+  a.href = isAndroid ? `intent://${location.host}${location.pathname}${location.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(location.href)};end` : location.href;
+  $('#hintChrome').classList.add('show');
+}
+customElements.whenDefined('model-viewer').then(() => {
+  viewer.addEventListener('load', () => { if (inApp) showChromeHint(); });
+  // if tapping "View on table" leaves us on the page with no AR session, the browser blocked it
+  document.querySelector('.ar-cta').addEventListener('click', () => {
+    setTimeout(() => { if (document.visibilityState === 'visible' && viewer.getAttribute('ar-status') !== 'session-started') showChromeHint(); }, 2500);
+  });
 });
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>

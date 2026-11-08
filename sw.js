@@ -1,5 +1,5 @@
 // Offline cache: app shell cache-first, menu.json network-first, 3D models/photos cached after first view
-const V = 'dishview-v3';
+const V = 'dishview-v4';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png',
   'https://cdn.jsdelivr.net/npm/@google/model-viewer@4.4.0/dist/model-viewer.min.js',
   'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js'];
