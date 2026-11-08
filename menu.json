@@ -1,0 +1,132 @@
+{
+  "restaurant": {
+    "name": "Maison Lumière",
+    "subtitle": {
+      "en": "Autumn Menu"
+    },
+    "city": "Dublin",
+    "logo": "",
+    "languages": [
+      "en"
+    ],
+    "defaultLanguage": "en",
+    "currency": "EUR",
+    "theme": {
+      "bg": "#0d0c0b",
+      "surface": "#151311",
+      "text": "#efe8dc",
+      "muted": "#9a9086",
+      "accent": "#c9a96e",
+      "line": "rgba(201,169,110,.22)"
+    },
+    "footerNote": {
+      "en": "Please inform your server of any allergies or dietary requirements."
+    }
+  },
+  "sections": [
+    {
+      "id": "mains",
+      "name": {
+        "en": "Main Courses"
+      }
+    },
+    {
+      "id": "desserts",
+      "name": {
+        "en": "Desserts"
+      }
+    },
+    {
+      "id": "test",
+      "name": {
+        "en": "AR test"
+      }
+    }
+  ],
+  "dishes": [
+    {
+      "id": "picanha",
+      "section": "mains",
+      "price": 48,
+      "name": {
+        "en": "Flame-grilled Wagyu Picanha"
+      },
+      "desc": {
+        "en": "Jasmine rice, brown-butter farofa, heirloom tomato vinaigrette, lime"
+      },
+      "pairing": {
+        "en": "Malbec, Catena Alta 2019"
+      },
+      "allergens": [
+        7
+      ],
+      "model": "",
+      "usdz": "",
+      "photo": "",
+      "size": "27 cm",
+      "chef": true
+    },
+    {
+      "id": "chocolate",
+      "section": "desserts",
+      "price": 16,
+      "name": {
+        "en": "70% Dark Chocolate"
+      },
+      "desc": {
+        "en": "Chocolate fondant, Madagascan vanilla ice cream, blueberries, cocoa"
+      },
+      "pairing": {
+        "en": "20-year Tawny Port"
+      },
+      "allergens": [
+        1,
+        3,
+        7
+      ],
+      "model": "",
+      "usdz": "",
+      "photo": "",
+      "size": "22 cm"
+    },
+    {
+      "id": "acai",
+      "section": "desserts",
+      "price": 14,
+      "name": {
+        "en": "Amazonian Açaí"
+      },
+      "desc": {
+        "en": "Pure açaí, red berries, house granola, coconut, mint"
+      },
+      "pairing": {
+        "en": "Moscatel de Setúbal"
+      },
+      "allergens": [
+        1,
+        8
+      ],
+      "model": "",
+      "usdz": "",
+      "photo": "",
+      "size": "15 cm"
+    },
+    {
+      "id": "test-scan",
+      "section": "test",
+      "price": 0,
+      "hidePrice": true,
+      "name": {
+        "en": "Scan test — biscuit pack"
+      },
+      "desc": {
+        "en": "Real phone scan (Xiaomi + Polycam). Remove this item before going live."
+      },
+      "allergens": [],
+      "model": "models/test-scan.glb",
+      "usdz": "",
+      "photo": "",
+      "size": "19 cm"
+    }
+  ]
+}

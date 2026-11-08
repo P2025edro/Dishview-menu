@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table QR codes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+@page{size:A4;margin:10mm}
+body{margin:0;font-family:Inter,sans-serif;background:#e9e6e1}
+.bar{display:flex;gap:12px;justify-content:center;align-items:center;padding:16px;font-size:14px}
+.bar input{width:64px;padding:6px 8px;font:inherit}
+.bar button{font:inherit;padding:8px 18px;border:0;border-radius:6px;background:#0d0c0b;color:#efe8dc;cursor:pointer}
+.sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:8mm;padding:6mm 10mm;max-width:190mm;margin:0 auto}
+.tent{background:#0d0c0b;color:#efe8dc;border:1px solid rgba(201,169,110,.35);border-radius:3mm;padding:10mm 8mm;text-align:center;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tent small{letter-spacing:.32em;text-transform:uppercase;font-size:7.5pt;color:#9a9086}
+.tent h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22pt;line-height:1.1;margin:3mm 0 6mm}
+.qr{background:#fff;border-radius:2mm;padding:3mm;width:40mm;margin:0 auto}
+.qr svg{display:block;width:100%;height:auto}
+.tent p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12pt;line-height:1.4;margin:6mm 0 5mm;color:#d9cfc2}
+.tent p span{color:#9a9086}
+.tent b{display:inline-block;color:#c9a96e;letter-spacing:.3em;text-transform:uppercase;font-weight:400;font-size:8.5pt;border-top:1px solid rgba(201,169,110,.35);padding-top:3mm}
+@media print{.bar{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="bar">Tables: <input id="n" type="number" min="1" max="99" value="12"> <button onclick="build()">Generate</button> <button onclick="print()">Print</button></div>
+<div class="sheet" id="sheet"></div>
+<script>
+let NAME = '';
+function qr(text){ const q = qrcode(0,'M'); q.addData(text); q.make(); return q.createSvgTag({cellSize:4, margin:1, scalable:true}); }
+function build(){
+  const n = Math.max(1, Math.min(99, +document.getElementById('n').value || 12));
+  const base = location.origin + location.pathname.replace(/mesas\.html$/, '');
+  document.getElementById('sheet').innerHTML = Array.from({length:n}, (_, i) => `
+    <div class="tent"><small>${NAME}</small><h2>See the dish<br>on your table</h2>
+      <div class="qr">${qr(base + '?table=' + (i+1))}</div>
+      <p>Point your camera at the code<br><span>Every dish, at real size, in front of you</span></p>
+      <b>Table ${i+1}</b></div>`).join('');
+}
+fetch('menu.json').then(r => r.json()).then(m => { NAME = m.restaurant.name; document.title = 'Table QR codes — ' + NAME; build(); });
+</script>
+</body>
+</html>
