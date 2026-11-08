@@ -1,9 +1,16 @@
 {
+  "rewrites": [
+    { "source": "/r/:slug", "destination": "/menu.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
   "headers": [
     { "source": "/models/(.*)", "headers": [
       { "key": "Access-Control-Allow-Origin", "value": "*" },
       { "key": "Cache-Control", "value": "public, max-age=3600" } ] },
-    { "source": "/(.*)\\.usdz", "headers": [ { "key": "Content-Type", "value": "model/vnd.usdz+zip" } ] },
-    { "source": "/(.*)\\.glb", "headers": [ { "key": "Content-Type", "value": "model/gltf-binary" } ] }
+    { "source": "/(.*)\\.glb", "headers": [ { "key": "Content-Type", "value": "model/gltf-binary" } ] },
+    { "source": "/admin(.*)", "headers": [ { "key": "X-Robots-Tag", "value": "noindex" }, { "key": "Cache-Control", "value": "no-store" } ] },
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" } ] }
   ]
 }

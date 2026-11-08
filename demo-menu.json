@@ -39,7 +39,7 @@
     {
       "id": "test",
       "name": {
-        "en": "AR test"
+        "en": "Try it"
       }
     }
   ],
@@ -117,13 +117,13 @@
       "price": 0,
       "hidePrice": true,
       "name": {
-        "en": "Scan test — biscuit pack"
+        "en": "Scan sample — real phone capture"
       },
       "desc": {
-        "en": "Real phone scan (Xiaomi + Polycam). Remove this item before going live."
+        "en": "Captured with an Android phone in a few minutes. Tap “View on table” to place it in front of you."
       },
       "allergens": [],
-      "model": "models/test-scan.glb",
+      "model": "/models/test-scan.glb",
       "usdz": "",
       "photo": "",
       "size": "19 cm"

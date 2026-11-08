@@ -1,0 +1,18 @@
+{
+  "name": "dishview",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.0.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "esbuild": "^0.28.2"
+  },
+  "scripts": {
+    "vendor": "esbuild tools/vendor-entry.js --bundle --format=esm --minify --platform=browser --external:node:fs --external:node:path --outfile=vendor/admin-libs.js"
+  }
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0c0b">
+<link rel="manifest" id="manifestLink" href="/api/manifest?r=demo">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Menu">
+<title>Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.4.0/dist/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+<style>
+  :root{--bg:#0d0c0b;--surface:#151311;--text:#efe8dc;--muted:#9a9086;--accent:#c9a96e;--line:rgba(201,169,110,.22);
+        --serif:'Cormorant Garamond',Georgia,serif;--sans:Inter,system-ui,sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  .page{max-width:640px;margin:0 auto;padding:0 26px calc(48px + env(safe-area-inset-bottom))}
+  .lang{position:absolute;top:calc(18px + env(safe-area-inset-top));right:22px;display:flex;gap:4px;font-size:11px;letter-spacing:.18em}
+  .lang button{padding:6px 4px;color:var(--muted)}
+  .lang button[aria-pressed=true]{color:var(--accent)}
+  .lang span{color:var(--line);padding:6px 0}
+  header{text-align:center;padding:calc(64px + env(safe-area-inset-top)) 0 34px}
+  .eyebrow{font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
+  header h1{font-family:var(--serif);font-weight:500;font-size:44px;letter-spacing:.02em;line-height:1.05;margin:14px 0 10px}
+  header img.logo{max-width:180px;max-height:90px;margin:18px auto 12px;display:block}
+  header .sub{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--muted)}
+  .rule{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px auto 0;color:var(--accent)}
+  .rule::before,.rule::after{content:"";height:1px;width:64px;background:var(--line)}
+  .table{margin-top:18px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .howto{display:flex;gap:14px;align-items:center;text-align:left;margin:0 auto 10px;padding:14px 18px;border:1px solid var(--line);border-radius:2px;max-width:440px}
+  .howto p{font-size:13px;line-height:1.55;color:var(--muted)}
+  .howto p em{font-family:var(--serif);font-size:16px;color:var(--text)}
+  section{padding-top:46px}
+  section h2{text-align:center;font-family:var(--sans);font-weight:400;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .dish{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:24px 0;border-bottom:1px solid var(--line)}
+  .dish:last-child{border-bottom:0}
+  .dish h3{font-family:var(--serif);font-weight:500;font-size:24px;line-height:1.15;letter-spacing:.005em}
+  .dish h3 .chef{font-family:var(--sans);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);vertical-align:middle;margin-left:8px;border:1px solid var(--line);padding:3px 6px}
+  .dish p{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.45;color:var(--muted);margin-top:6px}
+  .meta{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:12px;font-size:13px}
+  .price{font-family:var(--serif);font-size:20px;font-weight:500;color:var(--text)}
+  .allg{font-size:10.5px;letter-spacing:.08em;color:var(--muted)}
+  .ar-link{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);padding:9px 12px;border:1px solid var(--line);border-radius:999px;transition:background .25s,border-color .25s}
+  .ar-link:hover,.ar-link:active{background:rgba(201,169,110,.08);border-color:var(--accent)}
+  .thumb{width:104px;height:104px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 55%,#2a241e,#121010 72%);border:1px solid var(--line);position:relative}
+  .thumb model-viewer,.thumb img{width:100%;height:100%;object-fit:cover;display:block;--poster-color:transparent;--progress-bar-height:0px}
+  .thumb.has3d::after{content:"3D";position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:8.5px;letter-spacing:.2em;color:var(--accent);background:rgba(13,12,11,.7);padding:2px 6px;border-radius:99px}
+  .legend{margin-top:56px;padding-top:26px;border-top:1px solid var(--line);font-size:11px;line-height:1.9;color:var(--muted);text-align:center}
+  .legend b{font-weight:500;color:var(--text);letter-spacing:.2em;text-transform:uppercase;font-size:10px;display:block;margin-bottom:8px}
+  .note{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--muted);text-align:center;margin-top:22px}
+  .credit{text-align:center;margin-top:26px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#5d554e}
+  .credit a{color:inherit;text-decoration:none}
+  .view{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .35s ease}
+  .view.open{opacity:1;pointer-events:auto}
+  .view-top{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 18px 0}
+  .close{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;background:rgba(13,12,11,.6);backdrop-filter:blur(8px)}
+  .size{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  #viewer{flex:1;width:100%;min-height:0;background:radial-gradient(ellipse at 50% 58%,#2b241e 0%,#0d0c0b 68%);--progress-bar-color:var(--accent)}
+  .ar-cta{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;white-space:nowrap;padding:16px 26px;border-radius:999px;background:var(--accent);color:#14100a;font-size:11.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;box-shadow:0 12px 40px rgba(201,169,110,.25)}
+  .hud{position:absolute;top:calc(20px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:999px;background:rgba(13,12,11,.75);font-size:12px;letter-spacing:.06em;display:none;white-space:nowrap}
+  model-viewer[ar-status="session-started"] .hud{display:block}
+  .info{padding:22px 26px calc(24px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface);text-align:center}
+  .info h3{font-family:var(--serif);font-weight:500;font-size:28px}
+  .info p{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--muted);margin:6px auto 0;max-width:460px;line-height:1.45}
+  .info .row{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:14px;font-size:12px;color:var(--muted)}
+  .pairing{margin-top:14px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+  .pairing span{display:block;font-family:var(--serif);font-size:16px;letter-spacing:0;text-transform:none;font-style:italic;color:var(--text);margin-top:4px}
+  .qr{display:none;align-items:center;gap:16px;justify-content:center;margin-top:18px;text-align:left}
+  .qr img{width:88px;height:88px;background:#fff;padding:6px;border-radius:4px}
+  .qr p{font-family:var(--sans);font-style:normal;font-size:12.5px;max-width:240px;margin:0}
+  .no-ar .qr{display:flex}
+  .hint-chrome{display:none;margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
+  .hint-chrome.show{display:block}
+  .hint-chrome a{display:inline-block;margin-top:10px;padding:10px 18px;border-radius:999px;background:var(--accent);color:#14100a;text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500}
+  .no-ar .ar-cta{display:none}
+  .fade{animation:fade .8s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.fade{animation:none}.view{transition:none}}
+</style>
+</head>
+<body>
+<div class="lang" id="lang" role="group" aria-label="Language"></div>
+<div class="page" id="page"></div>
+
+<div class="view" id="view" role="dialog" aria-modal="true">
+  <div class="view-top">
+    <button class="close" id="close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <span class="size" id="vSize"></span>
+    <span style="width:44px"></span>
+  </div>
+  <model-viewer id="viewer" camera-controls touch-action="pan-y" shadow-intensity="1.2" shadow-softness="0.9" exposure="1.0"
+    tone-mapping="aces" environment-image="neutral" interaction-prompt="none"
+    ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor"
+    camera-orbit="25deg 60deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 85deg auto">
+    <button slot="ar-button" class="ar-cta">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="m12 7 5 3v5l-5 3-5-3v-5l5-3Z"/></svg>
+      <span id="ctaLabel"></span>
+    </button>
+    <div class="hud" id="hud"></div>
+  </model-viewer>
+  <div class="info">
+    <h3 id="vName"></h3>
+    <p id="vDesc"></p>
+    <div class="row"><span class="price" id="vPrice"></span><span class="allg" id="vAllg"></span></div>
+    <div class="pairing" id="vPair"></div>
+    <div class="qr"><img id="qrImg" alt="QR"><p id="qrText"></p></div>
+    <div class="hint-chrome" id="hintChrome"><span id="hintText"></span><br><a id="chromeLink" href="#"></a></div>
+  </div>
+</div>
+
+<script>
+const UI = {
+  pt:{table:'Mesa',howto:'<em>Veja o prato na sua mesa.</em><br>Toque em “Ver na mesa” e aponte a câmera para a mesa — o prato aparece em tamanho real.',
+      onTable:'Ver na mesa',hud:'Mova o celular devagar sobre a mesa',pairing:'Sugestão do sommelier',size:'Tamanho real',
+      qr:'A realidade aumentada funciona no celular. Aponte a câmera para o código para abrir este prato.',
+      openChrome:'Abrir no Chrome',inApp:'Para ver o prato na mesa, abra esta página no Chrome — navegadores dentro de apps bloqueiam a câmera.',
+      noArPhone:'Para ver o prato na mesa, instale ou atualize o “Google Play Services for AR” na Play Store.',
+      allergens:'Alérgenos',credit:'Realidade aumentada por'},
+  en:{table:'Table',howto:'<em>See the dish on your table.</em><br>Tap “View on table” and point your camera at the table — the dish appears at real size.',
+      onTable:'View on table',hud:'Move your phone slowly across the table',pairing:'Sommelier’s pairing',size:'Real size',
+      qr:'Augmented reality works on your phone. Point your camera at the code to open this dish.',
+      openChrome:'Open in Chrome',inApp:'To see this dish on your table, open this page in Chrome — in-app browsers block the camera.',
+      noArPhone:'To see this dish on your table, install or update “Google Play Services for AR” from the Play Store, then reopen this page.',
+      allergens:'Allergens',credit:'Augmented reality by'}
+};
+const ALLERGENS = {
+  pt:['Cereais com glúten','Crustáceos','Ovos','Peixe','Amendoim','Soja','Leite','Castanhas e nozes','Aipo','Mostarda','Gergelim','Sulfitos','Tremoço','Moluscos'],
+  en:['Cereals containing gluten','Crustaceans','Eggs','Fish','Peanuts','Soybeans','Milk','Nuts','Celery','Mustard','Sesame','Sulphites','Lupin','Molluscs']
+};
+const AR_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m12 12 8-4.5M12 12v9M12 12 4 7.5"/></svg>';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const params = new URLSearchParams(location.search);
+let MENU, lang, current = null;
+const t = o => (o && typeof o === 'object') ? (o[lang] ?? Object.values(o)[0]) : (o ?? '');
+const money = d => d.hidePrice ? '' : (Number.isInteger(d.price) ? String(d.price) : Number(d.price).toFixed(2));
+
+function render(){
+  const R = MENU.restaurant, ui = UI[lang] || UI.en;
+  document.documentElement.lang = lang;
+  document.title = `${R.name} — ${t(R.subtitle)}`;
+  $('#lang').style.display = R.languages.length > 1 ? '' : 'none';
+  $('#lang').innerHTML = R.languages.map((l,i) => `${i?'<span>·</span>':''}<button data-lang="${l}" aria-pressed="${l===lang}">${l.toUpperCase()}</button>`).join('');
+  const table = params.get('mesa') || params.get('table');
+  $('#page').innerHTML = `
+    <header class="fade">
+      <div class="eyebrow">${esc(R.city)}</div>
+      ${R.logo ? `<img class="logo" src="${esc(R.logo)}" alt="${esc(R.name)}">` : `<h1>${esc(R.name)}</h1>`}
+      <div class="sub">${esc(t(R.subtitle))}</div>
+      <div class="rule"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 0 10 5 5 10 0 5Z" fill="currentColor"/></svg></div>
+      ${table ? `<div class="table">${ui.table} ${esc(table)}</div>` : ''}
+    </header>
+    <div class="howto fade"><span style="color:var(--accent);flex:none">${AR_ICON.replace(/14/g,'26')}</span><p>${ui.howto}</p></div>
+    ${MENU.sections.map(s => {
+      const items = MENU.dishes.filter(d => d.section === s.id);
+      return items.length ? `<section class="fade"><h2>${esc(t(s.name))}</h2>${items.map(dishRow).join('')}</section>` : '';
+    }).join('')}
+    <div class="legend"><b>${ui.allergens}</b>${ALLERGENS[lang].map((a,i)=>`${i+1} ${a}`).join(' · ')}</div>
+    ${R.footerNote ? `<p class="note">${esc(t(R.footerNote))}</p>` : ''}
+    <div class="credit">${ui.credit} Dishview</div>`;
+  $('#ctaLabel').textContent = ui.onTable;
+  $('#hud').textContent = ui.hud;
+  $('#qrText').textContent = ui.qr;
+  if (current) fill(current);
+}
+function dishRow(d){
+  const ui = UI[lang] || UI.en, has3d = !!d.model;
+  const inner = d.photo ? `<img src="${esc(d.photo)}" alt="" loading="lazy">`
+    : has3d ? `<model-viewer src="${esc(d.model)}" loading="lazy" camera-orbit="25deg 55deg auto" environment-image="neutral" tone-mapping="aces" interaction-prompt="none" disable-zoom></model-viewer>` : '';
+  const thumb = !inner ? '' : has3d
+    ? `<button class="thumb has3d" data-open="${d.id}" aria-label="3D — ${esc(t(d.name))}">${inner}</button>`
+    : `<div class="thumb">${inner}</div>`;
+  return `<article class="dish">
+    <div>
+      <h3>${esc(t(d.name))}${d.chef ? `<span class="chef">Chef</span>` : ''}</h3>
+      <p>${esc(t(d.desc))}</p>
+      <div class="meta">
+        ${money(d) ? `<span class="price">${money(d)}</span>` : ''}
+        ${d.allergens?.length ? `<span class="allg">${d.allergens.join(' · ')}</span>` : ''}
+        ${has3d ? `<button class="ar-link" data-ar="${d.id}">${AR_ICON}${ui.onTable}</button>` : ''}
+      </div>
+    </div>
+    ${thumb}
+  </article>`;
+}
+const viewer = $('#viewer');
+if (params.get('ar')) viewer.setAttribute('ar-modes', params.get('ar') + ' quick-look');
+function fill(d){
+  const ui = UI[lang] || UI.en;
+  $('#vName').textContent = t(d.name);
+  $('#vDesc').textContent = t(d.desc);
+  $('#vPrice').textContent = money(d);
+  $('#vAllg').textContent = d.allergens?.length ? `${ui.allergens}: ${d.allergens.join(' · ')}` : '';
+  $('#vPair').innerHTML = d.pairing ? `${ui.pairing}<span>${esc(t(d.pairing))}</span>` : '';
+  $('#vSize').textContent = d.size ? `${ui.size} · ${d.size}` : '';
+  viewer.alt = t(d.name);
+}
+function open(id, ar){
+  const d = MENU.dishes.find(x => x.id === id); if (!d || !d.model) return;
+  current = d; fill(d);
+  if (viewer.getAttribute('src') !== d.model){
+    d.usdz ? viewer.setAttribute('ios-src', d.usdz) : viewer.removeAttribute('ios-src');
+    d.photo ? viewer.setAttribute('poster', d.photo) : viewer.removeAttribute('poster');
+    viewer.src = d.model;
+  }
+  try{ const q = qrcode(0,'M'); const u2 = new URL(location.origin + location.pathname); u2.searchParams.set('prato', d.id); q.addData(u2.href); q.make();
+    $('#qrImg').src = 'data:image/svg+xml;utf8,' + encodeURIComponent(q.createSvgTag({cellSize:4, margin:1, scalable:true})); }catch(_){}
+  const u = new URL(location.href); u.searchParams.set('prato', id); history.replaceState(null,'',u);
+  $('#view').classList.add('open'); document.body.style.overflow = 'hidden';
+}
+function close(){
+  $('#view').classList.remove('open'); document.body.style.overflow = ''; current = null;
+  const u = new URL(location.href); u.searchParams.delete('prato'); history.replaceState(null,'',u);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.lang){ lang = b.dataset.lang; try{localStorage.setItem('lang',lang)}catch(_){} render(); }
+  else if (b.dataset.ar) open(b.dataset.ar, true);
+  else if (b.dataset.open) open(b.dataset.open, false);
+  else if (b.id === 'close') close();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+customElements.whenDefined('model-viewer').then(() => {
+  viewer.addEventListener('load', () => {
+    const noAr = !viewer.canActivateAR, mobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    $('#view').classList.toggle('no-ar', noAr);
+    $('#qrText').textContent = (noAr && mobile && /Android/i.test(navigator.userAgent)) ? (UI[lang]||UI.en).noArPhone : (UI[lang]||UI.en).qr;
+    document.querySelector('.qr img').style.display = (noAr && mobile) ? 'none' : '';
+  });
+  viewer.addEventListener('ar-status', e => { if (e.detail.status === 'failed') { $('#view').classList.add('no-ar'); $('#qrText').textContent = (UI[lang]||UI.en).noArPhone; document.querySelector('.qr img').style.display='none'; } });
+});
+
+// which restaurant: /r/<slug>  (or ?r=<slug>); bare /menu.html shows the demo
+const SLUG = (location.pathname.match(/^\/r\/([a-z0-9-]+)/) || [])[1] || params.get('r') || 'demo';
+const abs = u => (!u || /^(https?:)?\//.test(u)) ? u : '/' + u.replace(/^\.?\//, '');
+document.getElementById('manifestLink').href = `/api/manifest?r=${encodeURIComponent(SLUG)}`;
+fetch(`/api/menu?r=${encodeURIComponent(SLUG)}`, {cache:'no-cache'}).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(m => {
+  m.dishes = (m.dishes || []).map(d => ({ ...d, model: abs(d.model), usdz: abs(d.usdz), photo: abs(d.photo) }));
+  if (m.restaurant?.logo) m.restaurant.logo = abs(m.restaurant.logo);
+  MENU = m; const R = m.restaurant;
+  for (const [k,v] of Object.entries(R.theme || {})) document.documentElement.style.setProperty('--'+k, v);
+  let saved = null; try{ saved = localStorage.getItem('lang'); }catch(_){}
+  const nav = (navigator.language||'').slice(0,2);
+  lang = [params.get('lang'), saved, nav, R.defaultLanguage].find(l => l && R.languages.includes(l)) || R.languages[0];
+  render();
+  const deep = params.get('prato') || params.get('dish'); if (deep) open(deep, false);
+}).catch(() => {
+  document.getElementById('page').innerHTML = '<header><div class="eyebrow">Dishview</div><h1 style="font-size:32px">Menu not found</h1><div class="sub">Please check the link or ask your server.</div></header>';
+});
+const UA = navigator.userAgent, isAndroid = /Android/i.test(UA);
+const inApp = /; wv\)|FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|Claude|GSA\//i.test(UA);
+function showChromeHint(){
+  const ui = UI[lang] || UI.en;
+  $('#hintText').textContent = ui.inApp;
+  const a = $('#chromeLink'); a.textContent = ui.openChrome;
+  a.href = isAndroid ? `intent://${location.host}${location.pathname}${location.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(location.href)};end` : location.href;
+  $('#hintChrome').classList.add('show');
+}
+customElements.whenDefined('model-viewer').then(() => {
+  viewer.addEventListener('load', () => { if (inApp) showChromeHint(); });
+  // if tapping "View on table" leaves us on the page with no AR session, the browser blocked it
+  document.querySelector('.ar-cta').addEventListener('click', () => {
+    setTimeout(() => { if (document.visibilityState === 'visible' && viewer.getAttribute('ar-status') !== 'session-started') showChromeHint(); }, 2500);
+  });
+});
+if (params.has('debug')) {
+  const box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99;max-height:40vh;overflow:auto;background:#000c;color:#9f9;font:11px/1.4 monospace;padding:8px;border-radius:6px;white-space:pre-wrap';
+  document.body.appendChild(box);
+  const log = (...a) => { box.textContent += a.join(' ') + '\n'; box.scrollTop = 1e9; };
+  log('UA', navigator.userAgent); log('inApp', inApp, '| xr', !!navigator.xr, '| secure', isSecureContext);
+  if (navigator.xr) navigator.xr.isSessionSupported('immersive-ar').then(s => log('WebXR immersive-ar supported:', s)).catch(e => log('xr err', e));
+  customElements.whenDefined('model-viewer').then(() => {
+    log('ar-modes', viewer.getAttribute('ar-modes'));
+    viewer.addEventListener('load', () => log('model loaded; canActivateAR =', viewer.canActivateAR));
+    viewer.addEventListener('error', e => log('model error', JSON.stringify(e.detail)));
+    viewer.addEventListener('ar-status', e => log('ar-status:', e.detail.status));
+    viewer.addEventListener('ar-tracking', e => log('ar-tracking:', e.detail.status));
+    document.querySelector('.ar-cta').addEventListener('click', () => log('AR button tapped'));
+  });
+  window.addEventListener('error', e => log('JS error', e.message));
+}
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+</script>
+</body>
+</html>

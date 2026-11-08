@@ -32,14 +32,15 @@ let NAME = '';
 function qr(text){ const q = qrcode(0,'M'); q.addData(text); q.make(); return q.createSvgTag({cellSize:4, margin:1, scalable:true}); }
 function build(){
   const n = Math.max(1, Math.min(99, +document.getElementById('n').value || 12));
-  const base = location.origin + location.pathname.replace(/mesas\.html$/, '');
+  const base = `${location.origin}/r/${SLUG}`;
   document.getElementById('sheet').innerHTML = Array.from({length:n}, (_, i) => `
     <div class="tent"><small>${NAME}</small><h2>See the dish<br>on your table</h2>
       <div class="qr">${qr(base + '?table=' + (i+1))}</div>
       <p>Point your camera at the code<br><span>Every dish, at real size, in front of you</span></p>
       <b>Table ${i+1}</b></div>`).join('');
 }
-fetch('menu.json').then(r => r.json()).then(m => { NAME = m.restaurant.name; document.title = 'Table QR codes — ' + NAME; build(); });
+const SLUG = new URLSearchParams(location.search).get('r') || 'demo';
+fetch('/api/menu?r=' + encodeURIComponent(SLUG)).then(r => r.json()).then(m => { NAME = m.restaurant.name; document.title = 'Table QR codes — ' + NAME; build(); });
 </script>
 </body>
 </html>
