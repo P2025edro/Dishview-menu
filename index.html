@@ -98,7 +98,7 @@
   </div>
   <model-viewer id="viewer" camera-controls touch-action="pan-y" shadow-intensity="1.2" shadow-softness="0.9" exposure="1.0"
     tone-mapping="aces" environment-image="neutral" interaction-prompt="none"
-    ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor"
+    ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" ar-placement="floor"
     camera-orbit="25deg 60deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 85deg auto">
     <button slot="ar-button" class="ar-cta">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="m12 7 5 3v5l-5 3-5-3v-5l5-3Z"/></svg>
@@ -124,6 +124,7 @@ const UI = {
   en:{table:'Table',howto:'<em>See the dish on your table.</em><br>Tap “View on table” and point your camera at the table — the dish appears at real size.',
       onTable:'View on table',hud:'Move your phone slowly across the table',pairing:'Sommelier’s pairing',size:'Real size',
       qr:'Augmented reality works on your phone. Point your camera at the code to open this dish.',
+      noArPhone:'To see this dish on your table, install or update “Google Play Services for AR” from the Play Store, then reopen this page.',
       allergens:'Allergens',credit:'Augmented reality by'}
 };
 const ALLERGENS = {
@@ -210,10 +211,6 @@ function open(id, ar){
     $('#qrImg').src = 'data:image/svg+xml;utf8,' + encodeURIComponent(q.createSvgTag({cellSize:4, margin:1, scalable:true})); }catch(_){}
   const u = new URL(location.href); u.searchParams.set('prato', id); history.replaceState(null,'',u);
   $('#view').classList.add('open'); document.body.style.overflow = 'hidden';
-  if (ar){
-    const go = () => { if (viewer.canActivateAR) viewer.activateAR(); };
-    viewer.loaded ? go() : viewer.addEventListener('load', go, {once:true});
-  }
 }
 function close(){
   $('#view').classList.remove('open'); document.body.style.overflow = ''; current = null;
@@ -228,7 +225,13 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 customElements.whenDefined('model-viewer').then(() => {
-  viewer.addEventListener('load', () => $('#view').classList.toggle('no-ar', !viewer.canActivateAR));
+  viewer.addEventListener('load', () => {
+    const noAr = !viewer.canActivateAR, mobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    $('#view').classList.toggle('no-ar', noAr);
+    $('#qrText').textContent = (noAr && mobile && /Android/i.test(navigator.userAgent)) ? (UI[lang]||UI.en).noArPhone : (UI[lang]||UI.en).qr;
+    document.querySelector('.qr img').style.display = (noAr && mobile) ? 'none' : '';
+  });
+  viewer.addEventListener('ar-status', e => { if (e.detail.status === 'failed') { $('#view').classList.add('no-ar'); $('#qrText').textContent = (UI[lang]||UI.en).noArPhone; document.querySelector('.qr img').style.display='none'; } });
 });
 
 fetch('menu.json', {cache:'no-cache'}).then(r => r.json()).then(m => {
