@@ -101,7 +101,7 @@
   </div>
   <model-viewer id="viewer" camera-controls touch-action="pan-y" shadow-intensity="1.2" shadow-softness="0.9" exposure="1.0"
     tone-mapping="aces" environment-image="neutral" interaction-prompt="none"
-    ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed" ar-placement="floor"
+    ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor"
     camera-orbit="25deg 60deg auto" min-camera-orbit="auto 15deg auto" max-camera-orbit="auto 85deg auto">
     <button slot="ar-button" class="ar-cta">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="m12 7 5 3v5l-5 3-5-3v-5l5-3Z"/></svg>
@@ -196,6 +196,7 @@ function dishRow(d){
   </article>`;
 }
 const viewer = $('#viewer');
+if (params.get('ar')) viewer.setAttribute('ar-modes', params.get('ar') + ' quick-look');
 function fill(d){
   const ui = UI[lang] || UI.en;
   $('#vName').textContent = t(d.name);
@@ -266,6 +267,23 @@ customElements.whenDefined('model-viewer').then(() => {
     setTimeout(() => { if (document.visibilityState === 'visible' && viewer.getAttribute('ar-status') !== 'session-started') showChromeHint(); }, 2500);
   });
 });
+if (params.has('debug')) {
+  const box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99;max-height:40vh;overflow:auto;background:#000c;color:#9f9;font:11px/1.4 monospace;padding:8px;border-radius:6px;white-space:pre-wrap';
+  document.body.appendChild(box);
+  const log = (...a) => { box.textContent += a.join(' ') + '\n'; box.scrollTop = 1e9; };
+  log('UA', navigator.userAgent); log('inApp', inApp, '| xr', !!navigator.xr, '| secure', isSecureContext);
+  if (navigator.xr) navigator.xr.isSessionSupported('immersive-ar').then(s => log('WebXR immersive-ar supported:', s)).catch(e => log('xr err', e));
+  customElements.whenDefined('model-viewer').then(() => {
+    log('ar-modes', viewer.getAttribute('ar-modes'));
+    viewer.addEventListener('load', () => log('model loaded; canActivateAR =', viewer.canActivateAR));
+    viewer.addEventListener('error', e => log('model error', JSON.stringify(e.detail)));
+    viewer.addEventListener('ar-status', e => log('ar-status:', e.detail.status));
+    viewer.addEventListener('ar-tracking', e => log('ar-tracking:', e.detail.status));
+    document.querySelector('.ar-cta').addEventListener('click', () => log('AR button tapped'));
+  });
+  window.addEventListener('error', e => log('JS error', e.message));
+}
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
